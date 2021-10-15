@@ -38,10 +38,12 @@ abstract class _MasterStoreBase with Store {
     return _db != null;
   }
 
-  Future<bool>? saveEntry(
-      {required String? title,
-      required String? content,
-      required int? sentiment}) async {
+  Future<bool>? saveEntry({
+    required String? title,
+    required String? content,
+    required int? sentiment,
+    required DateTime? createdAt,
+  }) async {
     if (_db != null) {
       // Empty strings MUST NOT be used as values.
       // They might happen because of the TextEditingControllers
@@ -56,17 +58,22 @@ abstract class _MasterStoreBase with Store {
           'title': title,
           'content': content,
           'feeling': sentiment,
-          'created_at': DateTime.now().millisecondsSinceEpoch,
+          'created_at': createdAt != null
+              ? createdAt.millisecondsSinceEpoch
+              : DateTime.now().millisecondsSinceEpoch,
         });
 
-        entries.insert(
-            0,
-            Entry(
-                id: id,
-                createdAt: DateTime.now(),
-                title: title,
-                sentiment: sentiment,
-                content: content));
+        entries.add(Entry(
+          id: id,
+          createdAt: createdAt ?? DateTime.now(),
+          title: title,
+          sentiment: sentiment,
+          content: content,
+        ));
+      });
+
+      entries.sort((Entry a, Entry b) {
+        return b.createdAt.compareTo(a.createdAt);
       });
     }
 
