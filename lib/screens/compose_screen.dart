@@ -9,8 +9,8 @@ class ComposeScreen extends StatelessWidget {
   final _controller = TextEditingController();
 
   void _saveEntry(BuildContext context) {
-    Entry e = Entry(content: _controller.text);
-    Provider.of<MasterStore>(context, listen: false).saveEntry(e);
+    Provider.of<MasterStore>(context, listen: false)
+        .saveEntry(content: _controller.text, title: null);
   }
 
   @override

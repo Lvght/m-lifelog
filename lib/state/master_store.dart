@@ -35,14 +35,16 @@ abstract class _MasterStoreBase with Store {
     return _db != null;
   }
 
-  Future<bool>? saveEntry(Entry e) async {
+  Future<bool>? saveEntry(
+      {required String? title, required String? content}) async {
     if (_db != null) {
       await _db!.transaction((txn) async {
-        int id = await txn
-            .insert('Entries', {'title': e.content, 'content': e.content});
-        print('Inserted id = $id');
+        int id =
+            await txn.insert('Entries', {'title': title, 'content': content});
       });
     }
+
+    entries.insert(0, Entry(title: title, content: content));
 
     return false;
   }
