@@ -72,8 +72,10 @@ class _MainScreenState extends State<MainScreen> {
         },
         child: CustomScrollView(
           slivers: [
-            const SliverAppBar(
-              title: Text('Lifelog'),
+            SliverAppBar(
+              title: SizedBox(
+                  height: 32,
+                  child: Image.asset('lib/res/compact_full_logo_white.png')),
             ),
             Observer(
               builder: (_) => SliverList(
