@@ -12,8 +12,10 @@ class Entry {
     String? content = m['content'] as String?;
     int? sentiment = m['feeling'] as int?;
 
-    DateTime createdAt =
-        DateTime.tryParse(m['created_at'] as String) ?? DateTime.now();
+    DateTime createdAt = DateTime.now();
+    if (m['created_at'] != null) {
+      createdAt = DateTime.fromMillisecondsSinceEpoch(m['created_at'] as int);
+    }
 
     return Entry(
         id: id,

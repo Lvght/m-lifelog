@@ -9,7 +9,7 @@ class DatabaseHelper {
   static Future<void> _onCreate(Database db, int version) async {
     await db
         .execute('CREATE TABLE Entries (id INTEGER PRIMARY KEY, title TEXT, '
-            'content TEXT, feeling INT, created_at TEXT)');
+            'content TEXT, feeling INT, created_at INT)');
   }
 
   static Future<Database?> initializeDatabase() async {

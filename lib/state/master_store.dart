@@ -12,19 +12,22 @@ abstract class _MasterStoreBase with Store {
 
   Database? _db;
   int _offset = 0;
+  bool _exausted = false;
   final entries = ObservableList<Entry>();
 
   Future<void>? getContent() async {
-    if (_db != null) {
+    if (_db != null && !_exausted) {
       await _db!.transaction((txn) async {
         List<Map<String, Object?>> result = await txn.query('Entries',
-            offset: _offset, limit: 10, orderBy: '-id');
+            offset: _offset, limit: 10, orderBy: '-created_at');
+
+        if (result.length < 10) _exausted = true;
 
         for (Map<String, Object?> e in result) {
           entries.add(Entry.fromMap(e));
         }
 
-        _offset += 10;
+        _offset += result.length;
       });
     }
   }
@@ -53,7 +56,7 @@ abstract class _MasterStoreBase with Store {
           'title': title,
           'content': content,
           'feeling': sentiment,
-          'created_at': DateTime.now().toIso8601String()
+          'created_at': DateTime.now().millisecondsSinceEpoch,
         });
 
         entries.insert(

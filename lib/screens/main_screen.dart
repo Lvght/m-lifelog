@@ -47,25 +47,46 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
+  bool _locked = false;
+
+  Future<void>? _fetchMoreContent() async {
+    if (!_locked) {
+      _locked = true;
+      await Provider.of<MasterStore>(context, listen: false).getContent();
+      _locked = false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          const SliverAppBar(
-            title: Text('Lifelog'),
-          ),
-          Observer(
-            builder: (_) => SliverList(
-              delegate: SliverChildBuilderDelegate(
-                _builderDelegateFunction,
-                childCount: Provider.of<MasterStore>(context, listen: false)
-                    .entries
-                    .length,
-              ),
+      body: NotificationListener<ScrollNotification>(
+        onNotification: (notification) {
+          // Load more content when user aproaches bottom of screen.
+          if (notification.metrics.maxScrollExtent -
+                  notification.metrics.pixels <
+              10) {
+            _fetchMoreContent();
+          }
+          return true;
+        },
+        child: CustomScrollView(
+          slivers: [
+            const SliverAppBar(
+              title: Text('Lifelog'),
             ),
-          )
-        ],
+            Observer(
+              builder: (_) => SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  _builderDelegateFunction,
+                  childCount: Provider.of<MasterStore>(context, listen: false)
+                      .entries
+                      .length,
+                ),
+              ),
+            )
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _fobCallback,
