@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:lifelog/screens/main_screen.dart';
+import 'package:lifelog/screens/splash_screen.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const Lifelog());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class Lifelog extends StatelessWidget {
+  const Lifelog({Key? key}) : super(key: key);
 
   // This widget is the root of your application.
   @override
@@ -25,7 +26,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: const MainScreen(),
+      home: const SplashScreen(),
     );
   }
 }
