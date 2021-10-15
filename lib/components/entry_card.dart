@@ -1,9 +1,53 @@
 import 'package:flutter/material.dart';
 import 'package:lifelog/models/entry.dart';
 
+enum EntryCardMenuActions { delete, star }
+
 class EntryCard extends StatelessWidget {
-  const EntryCard(this._entry, {Key? key}) : super(key: key);
+  const EntryCard(this._entry, {required this.deleteFn, Key? key})
+      : super(key: key);
   final Entry _entry;
+  final Future<void>? Function(Entry) deleteFn;
+
+  String _weekday(int v) {
+    switch (v) {
+      case DateTime.sunday:
+        return 'Domingo';
+      case DateTime.monday:
+        return 'Segunda-feira';
+      case DateTime.tuesday:
+        return 'Terça-feira';
+      case DateTime.wednesday:
+        return 'Quarta-feira';
+      case DateTime.thursday:
+        return 'Quinta-feira';
+      case DateTime.friday:
+        return 'Sexta-feira';
+      default:
+        return 'Sábado';
+    }
+  }
+
+  /// Returns the Entry Card timestamp indicator.
+  String _entryTimestampIndicator() {
+    int daysDifference = _entry.createdAt.difference(DateTime.now()).inDays;
+
+    /// Shows 'Today', 'Yesterday' or the entry date in dd/mm/yyyy.
+    String weekdayIndicator = '';
+    if (daysDifference == 0) {
+      weekdayIndicator = 'Hoje';
+    } else if (daysDifference == 1) {
+      weekdayIndicator = 'Ontem';
+    } else {
+      weekdayIndicator = '${_entry.createdAt.day.toString().padLeft(2, '0')}/'
+          '${_entry.createdAt.month.toString().padLeft(2, '0')}/'
+          '${_entry.createdAt.year}';
+    }
+
+    // hh:mm - [Today|dd/mm/yyyy], Weekday
+    return '${_entry.createdAt.hour.toString().padLeft(2, '0')}:'
+        '${_entry.createdAt.minute.toString().padLeft(2, '0')} - $weekdayIndicator, ${_weekday(_entry.createdAt.weekday)}';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,12 +67,45 @@ class EntryCard extends StatelessWidget {
                 children: [
                   const Icon(Icons.access_time_filled),
                   const SizedBox(width: 8),
-                  Text('09:41 AM - Hoje',
+                  Text(_entryTimestampIndicator(),
                       style: Theme.of(context).textTheme.bodyText1)
                 ],
               ),
-              IconButton(
-                  onPressed: () {}, icon: const Icon(Icons.more_horiz_rounded))
+              PopupMenuButton<EntryCardMenuActions>(
+                onSelected: (EntryCardMenuActions action) async {
+                  switch (action) {
+                    case EntryCardMenuActions.delete:
+                      await deleteFn(_entry);
+                      break;
+                    case EntryCardMenuActions.star:
+                      // TODO: Handle this case.
+                      break;
+                  }
+                },
+                itemBuilder: (BuildContext context) =>
+                    <PopupMenuItem<EntryCardMenuActions>>[
+                  PopupMenuItem(
+                    child: Row(
+                      children: const [
+                        Icon(Icons.star_rounded),
+                        SizedBox(width: 8),
+                        Text('Favoritar'),
+                      ],
+                    ),
+                    value: EntryCardMenuActions.star,
+                  ),
+                  PopupMenuItem(
+                    child: Row(
+                      children: const [
+                        Icon(Icons.delete_rounded),
+                        SizedBox(width: 8),
+                        Text('Apagar'),
+                      ],
+                    ),
+                    value: EntryCardMenuActions.delete,
+                  ),
+                ],
+              )
             ],
           ),
           Row(

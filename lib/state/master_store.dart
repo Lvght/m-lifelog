@@ -44,11 +44,27 @@ abstract class _MasterStoreBase with Store {
           'content': content,
           'created_at': DateTime.now().toIso8601String()
         });
+
+        entries.insert(
+            0,
+            Entry(
+                id: id,
+                createdAt: DateTime.now(),
+                title: title,
+                content: content));
       });
     }
 
-    entries.insert(0, Entry(title: title, content: content));
-
     return false;
+  }
+
+  Future<void>? deleteEntry(int index) async {
+    if (_db != null) {
+      if (await _db!.delete('Entries',
+              where: 'id = ?', whereArgs: [entries[index].id]) ==
+          1) {
+        entries.removeAt(index);
+      }
+    }
   }
 }
