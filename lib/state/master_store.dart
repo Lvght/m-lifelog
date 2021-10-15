@@ -36,12 +36,23 @@ abstract class _MasterStoreBase with Store {
   }
 
   Future<bool>? saveEntry(
-      {required String? title, required String? content}) async {
+      {required String? title,
+      required String? content,
+      required int? sentiment}) async {
     if (_db != null) {
+      // Empty strings MUST NOT be used as values.
+      // They might happen because of the TextEditingControllers
+      if (title != null && title.isEmpty) title = null;
+      if (content != null && content.isEmpty) content = null;
+
+      // At least ONE information must be provided.
+      if (title == null && content == null && sentiment == null) return false;
+
       await _db!.transaction((txn) async {
         int id = await txn.insert('Entries', {
           'title': title,
           'content': content,
+          'feeling': sentiment,
           'created_at': DateTime.now().toIso8601String()
         });
 
@@ -51,6 +62,7 @@ abstract class _MasterStoreBase with Store {
                 id: id,
                 createdAt: DateTime.now(),
                 title: title,
+                sentiment: sentiment,
                 content: content));
       });
     }

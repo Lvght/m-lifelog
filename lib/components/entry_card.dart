@@ -49,6 +49,47 @@ class EntryCard extends StatelessWidget {
         '${_entry.createdAt.minute.toString().padLeft(2, '0')} - $weekdayIndicator, ${_weekday(_entry.createdAt.weekday)}';
   }
 
+  Widget _getSentimentIndicator(BuildContext context) {
+    Icon? icon;
+    String? text;
+
+    switch (_entry.sentiment) {
+      case 1:
+        icon = const Icon(Icons.sentiment_very_satisfied_rounded);
+        text = 'Excelente';
+        break;
+      case 2:
+        icon = const Icon(Icons.sentiment_satisfied_rounded);
+        text = 'Bem';
+        break;
+      case 3:
+        icon = const Icon(Icons.sentiment_neutral_rounded);
+        text = 'Normal';
+        break;
+      case 4:
+        icon = const Icon(Icons.sentiment_dissatisfied_rounded);
+        text = 'Mal';
+        break;
+      case 5:
+        icon = const Icon(Icons.sentiment_very_dissatisfied_rounded);
+        text = 'Péssimo';
+        break;
+      default:
+        return const SizedBox();
+    }
+
+    return Row(
+      children: [
+        icon,
+        const SizedBox(width: 8),
+        Text(
+          text,
+          style: Theme.of(context).textTheme.headline6,
+        )
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -108,16 +149,7 @@ class EntryCard extends StatelessWidget {
               )
             ],
           ),
-          Row(
-            children: [
-              const Icon(Icons.sentiment_very_satisfied_rounded),
-              const SizedBox(width: 8),
-              Text(
-                'Bem',
-                style: Theme.of(context).textTheme.headline6,
-              )
-            ],
-          ),
+          if (_entry.sentiment != null) _getSentimentIndicator(context),
           const SizedBox(height: 16),
           if (_entry.title != null)
             Text(_entry.title!, style: Theme.of(context).textTheme.headline6),
