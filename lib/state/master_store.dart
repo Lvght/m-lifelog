@@ -39,8 +39,11 @@ abstract class _MasterStoreBase with Store {
       {required String? title, required String? content}) async {
     if (_db != null) {
       await _db!.transaction((txn) async {
-        int id =
-            await txn.insert('Entries', {'title': title, 'content': content});
+        int id = await txn.insert('Entries', {
+          'title': title,
+          'content': content,
+          'created_at': DateTime.now().toIso8601String()
+        });
       });
     }
 

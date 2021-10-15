@@ -21,13 +21,13 @@ class _SplashScreenState extends State<SplashScreen> {
     bool initializationSucceded = await _store.initializeDatabase();
 
     if (initializationSucceded) {
-      Navigator.of(context).push(MaterialPageRoute(
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
           builder: (BuildContext context) => Provider(
                 create: (_) => _store,
                 builder: (_, __) => const MainScreen(),
               )));
     } else {
-      Navigator.of(context).push(MaterialPageRoute(
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
           builder: (BuildContext context) => const DatabaseErrorScreen()));
     }
   }

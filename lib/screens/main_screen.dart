@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:lifelog/components/entry_card.dart';
 import 'package:lifelog/screens/compose_screen.dart';
 import 'package:lifelog/state/master_store.dart';
 import 'package:provider/provider.dart';
@@ -13,8 +14,8 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   Widget? _builderDelegateFunction(BuildContext context, int index) {
-    return Text(Provider.of<MasterStore>(context).entries[index].content ??
-        'Sem conteúdo');
+    final _entry = Provider.of<MasterStore>(context).entries[index];
+    return EntryCard(_entry);
   }
 
   Future<void>? _loadData() async {
