@@ -33,7 +33,7 @@ class _MainScreenState extends State<MainScreen> {
   void _fobCallback() {
     Navigator.of(context).push(MaterialPageRoute(
         builder: (_) => Provider(
-              builder: (_, __) => ComposeScreen(),
+              builder: (_, __) => const ComposeScreen(),
               create: (_) => Provider.of<MasterStore>(context, listen: false),
             )));
   }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:lifelog/models/entry.dart';
 import 'package:lifelog/state/master_store.dart';
 import 'package:provider/provider.dart';
 
@@ -22,11 +21,13 @@ class _ComposeScreenState extends State<ComposeScreen> {
     });
   }
 
-  void _saveEntry(BuildContext context) {
-    Provider.of<MasterStore>(context, listen: false).saveEntry(
+  void _saveEntry(BuildContext context) async {
+    await Provider.of<MasterStore>(context, listen: false).saveEntry(
         content: _contentController.text,
         title: _titleController.text,
         sentiment: _currentReaction);
+
+    Navigator.of(context).pop();
   }
 
   @override
@@ -39,7 +40,10 @@ class _ComposeScreenState extends State<ComposeScreen> {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
-            Text('Como você está se sentindo?'),
+            Text(
+              'Como você está se sentindo?',
+              style: Theme.of(context).textTheme.headline5,
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [

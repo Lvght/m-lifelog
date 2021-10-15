@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:lifelog/screens/database_error.dart';
 import 'package:lifelog/screens/main_screen.dart';
 import 'package:lifelog/state/master_store.dart';

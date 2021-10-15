@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:lifelog/screens/main_screen.dart';
 import 'package:lifelog/screens/splash_screen.dart';
 
 void main() {
