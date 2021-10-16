@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:lifelog/screens/database_error.dart';
-import 'package:lifelog/screens/main_screen.dart';
+import 'package:lifelog/screens/wrapper.dart';
 import 'package:lifelog/state/master_store.dart';
 import 'package:provider/provider.dart';
 
@@ -23,7 +23,7 @@ class _SplashScreenState extends State<SplashScreen> {
       Navigator.of(context).pushReplacement(MaterialPageRoute(
           builder: (BuildContext context) => Provider(
                 create: (_) => _store,
-                builder: (_, __) => const MainScreen(),
+                builder: (_, __) => const Wrapper(),
               )));
     } else {
       Navigator.of(context).pushReplacement(MaterialPageRoute(

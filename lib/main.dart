@@ -76,6 +76,8 @@ class Lifelog extends StatelessWidget {
           bodyText2: GoogleFonts.roboto(fontSize: 16),
           subtitle1:
               GoogleFonts.roboto(color: const Color(0xFFFEFEFE), fontSize: 16),
+          subtitle2:
+              GoogleFonts.roboto(color: const Color(0xFF191919), fontSize: 16),
           headline5: GoogleFonts.montserrat(
               fontSize: 24, fontWeight: FontWeight.bold, letterSpacing: -.5),
           headline6: GoogleFonts.montserrat(

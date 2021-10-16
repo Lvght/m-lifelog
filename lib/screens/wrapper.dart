@@ -1,0 +1,40 @@
+import 'package:flutter/material.dart';
+import 'package:lifelog/screens/main_screen.dart';
+import 'package:lifelog/screens/options_screen.dart';
+
+class Wrapper extends StatefulWidget {
+  const Wrapper({Key? key}) : super(key: key);
+
+  @override
+  _WrapperState createState() => _WrapperState();
+}
+
+class _WrapperState extends State<Wrapper> {
+  int _index = 0;
+
+  void _changeIndex(int v) => setState(() {
+        _index = v;
+      });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        body: IndexedStack(
+          index: _index,
+          children: const [
+            MainScreen(),
+            OptionsScreen(),
+          ],
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          onTap: _changeIndex,
+          currentIndex: _index,
+          items: const [
+            BottomNavigationBarItem(
+                icon: Icon(Icons.home_rounded), label: 'Diário'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.menu_rounded), label: 'Opções'),
+          ],
+        ));
+  }
+}
