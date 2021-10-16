@@ -86,7 +86,8 @@ class _MainScreenState extends State<MainScreen> {
                       .length,
                 ),
               ),
-            )
+            ),
+            const SliverToBoxAdapter(child: SizedBox(height: 128)),
           ],
         ),
       ),

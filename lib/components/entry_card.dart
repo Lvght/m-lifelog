@@ -30,7 +30,14 @@ class EntryCard extends StatelessWidget {
 
   /// Returns the Entry Card timestamp indicator.
   String _entryTimestampIndicator() {
-    int daysDifference = _entry.createdAt.difference(DateTime.now()).inDays;
+    DateTime now = DateTime.now();
+
+    // Entry may be from yesterday, but has been written in less than 24hrs ago.
+    now = DateTime(now.year, now.month, now.day);
+    DateTime createdDate = DateTime(
+        _entry.createdAt.year, _entry.createdAt.month, _entry.createdAt.day);
+
+    int daysDifference = now.difference(createdDate).inDays;
 
     /// Shows 'Today', 'Yesterday' or the entry date in dd/mm/yyyy.
     String weekdayIndicator = '';
@@ -49,6 +56,7 @@ class EntryCard extends StatelessWidget {
         '${_entry.createdAt.minute.toString().padLeft(2, '0')} - $weekdayIndicator, ${_weekday(_entry.createdAt.weekday)}';
   }
 
+  /// Returns the icon and text combination expressing the entries sentiment.
   Widget _getSentimentIndicator(BuildContext context) {
     Icon? icon;
     String? text;
@@ -93,7 +101,7 @@ class EntryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 16),
+      margin: const EdgeInsets.symmetric(vertical: 8),
       padding: const EdgeInsets.symmetric(horizontal: 8),
       width: MediaQuery.of(context).size.width,
       child: Column(

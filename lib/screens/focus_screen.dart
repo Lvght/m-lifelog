@@ -67,6 +67,7 @@ class _FocusScreenState extends State<FocusScreen> {
               TextField(
                 autofocus: true,
                 controller: _contentController,
+                maxLines: null,
                 decoration:
                     const InputDecoration.collapsed(hintText: 'Conteúdo'),
                 style: Theme.of(context)
