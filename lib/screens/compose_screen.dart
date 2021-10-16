@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:lifelog/state/compose_store.dart';
 import 'package:lifelog/state/master_store.dart';
 import 'package:provider/provider.dart';
@@ -19,10 +20,12 @@ class _ComposeScreenState extends State<ComposeScreen> {
 
   void _saveEntry(BuildContext context) async {
     await Provider.of<MasterStore>(context, listen: false).saveEntry(
-        content: _contentController.text,
-        title: _titleController.text,
-        sentiment: _store.currentSentiment,
-        createdAt: _store.dateTime);
+      content: _contentController.text,
+      title: _titleController.text,
+      sentiment: _store.currentSentiment,
+      createdAt: _store.dateTime,
+      image: _store.image,
+    );
 
     Navigator.of(context).pop();
   }
@@ -43,6 +46,15 @@ class _ComposeScreenState extends State<ComposeScreen> {
           t?.hour ?? DateTime.now().hour, t?.minute ?? DateTime.now().minute);
 
       _store.setDateTime(f);
+    }
+  }
+
+  Future<void>? _getImage() async {
+    final XFile? _file =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
+
+    if (_file != null) {
+      _store.setImage(await _file.readAsBytes());
     }
   }
 
@@ -104,13 +116,39 @@ class _ComposeScreenState extends State<ComposeScreen> {
                   ],
                 ),
                 const SizedBox(height: 64),
+                if (_store.image != null)
+                  Stack(
+                    children: [
+                      AspectRatio(
+                        aspectRatio: 4 / 3,
+                        child: ClipRRect(
+                          child: Image.memory(
+                            _store.image!,
+                            fit: BoxFit.cover,
+                          ),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      Positioned(
+                        right: 8,
+                        top: 8,
+                        child: IconButton(
+                          icon: const Icon(Icons.remove_circle_rounded),
+                          onPressed: () {
+                            _store.setImage(null);
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                const SizedBox(height: 32),
                 TextField(
                   controller: _titleController,
                   decoration: const InputDecoration.collapsed(
                     hintText: 'Título',
                   ),
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: 16),
                 TextField(
                   controller: _contentController,
                   maxLines: null,
@@ -143,8 +181,11 @@ class _ComposeScreenState extends State<ComposeScreen> {
                           '| ${_store.dateTime!.hour.toString().padLeft(2, '0')}'
                           ':${_store.dateTime!.minute.toString().padLeft(2, '0')}')),
               IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.add_photo_alternate_rounded),
+                onPressed: () async => await _getImage(),
+                icon: Icon(Icons.add_photo_alternate_rounded,
+                    color: _store.image == null
+                        ? null
+                        : Theme.of(context).colorScheme.primary),
               ),
               IconButton(
                 onPressed: () {},

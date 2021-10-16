@@ -1,3 +1,5 @@
+import 'dart:typed_data' show Uint8List;
+
 import 'package:lifelog/helpers/database_helper.dart';
 import 'package:lifelog/models/entry.dart';
 import 'package:mobx/mobx.dart';
@@ -43,6 +45,7 @@ abstract class _MasterStoreBase with Store {
     required String? content,
     required int? sentiment,
     required DateTime? createdAt,
+    required Uint8List? image,
   }) async {
     if (_db != null) {
       // Empty strings MUST NOT be used as values.
@@ -58,6 +61,7 @@ abstract class _MasterStoreBase with Store {
           'title': title,
           'content': content,
           'feeling': sentiment,
+          'image': image,
           'created_at': createdAt != null
               ? createdAt.millisecondsSinceEpoch
               : DateTime.now().millisecondsSinceEpoch,
@@ -69,6 +73,7 @@ abstract class _MasterStoreBase with Store {
           title: title,
           sentiment: sentiment,
           content: content,
+          image: image,
         ));
       });
 
