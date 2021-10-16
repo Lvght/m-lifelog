@@ -121,6 +121,7 @@ class EntryCard extends StatelessWidget {
                 ],
               ),
               PopupMenuButton<EntryCardMenuActions>(
+                color: Theme.of(context).colorScheme.secondary,
                 onSelected: (EntryCardMenuActions action) async {
                   switch (action) {
                     case EntryCardMenuActions.delete:
@@ -133,22 +134,24 @@ class EntryCard extends StatelessWidget {
                 },
                 itemBuilder: (BuildContext context) =>
                     <PopupMenuItem<EntryCardMenuActions>>[
-                  PopupMenuItem(
+                  /*PopupMenuItem(
                     child: Row(
-                      children: const [
-                        Icon(Icons.star_rounded),
-                        SizedBox(width: 8),
-                        Text('Favoritar'),
+                      children: [
+                        Icon(Icons.star_rounded,
+                            color: Theme.of(context).colorScheme.onSecondary),
+                        const SizedBox(width: 8),
+                        const Text('Favoritar'),
                       ],
                     ),
                     value: EntryCardMenuActions.star,
-                  ),
+                  ),*/
                   PopupMenuItem(
                     child: Row(
-                      children: const [
-                        Icon(Icons.delete_rounded),
-                        SizedBox(width: 8),
-                        Text('Apagar'),
+                      children: [
+                        Icon(Icons.delete_rounded,
+                            color: Theme.of(context).colorScheme.onSecondary),
+                        const SizedBox(width: 8),
+                        const Text('Apagar'),
                       ],
                     ),
                     value: EntryCardMenuActions.delete,
@@ -176,6 +179,7 @@ class EntryCard extends StatelessWidget {
             ),
           if (_entry.title != null)
             Text(_entry.title!, style: Theme.of(context).textTheme.headline6),
+          if (_entry.title != null) const SizedBox(height: 8),
           if (_entry.content != null)
             Text(_entry.content!, style: Theme.of(context).textTheme.bodyText2),
           Divider(

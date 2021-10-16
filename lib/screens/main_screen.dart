@@ -78,14 +78,27 @@ class _MainScreenState extends State<MainScreen> {
                   child: Image.asset('lib/res/compact_full_logo_white.png')),
             ),
             Observer(
-              builder: (_) => SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  _builderDelegateFunction,
-                  childCount: Provider.of<MasterStore>(context, listen: false)
-                      .entries
-                      .length,
-                ),
-              ),
+              builder: (_) {
+                if (Provider.of<MasterStore>(context, listen: false)
+                    .entries
+                    .isEmpty) {
+                  return SliverFillRemaining(
+                    child: Container(
+                      padding: const EdgeInsets.fromLTRB(16, 64, 16, 16),
+                      child: const Text(
+                          '😔 Parece que não há nada aqui... ainda.'),
+                    ),
+                  );
+                }
+                return SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    _builderDelegateFunction,
+                    childCount: Provider.of<MasterStore>(context, listen: false)
+                        .entries
+                        .length,
+                  ),
+                );
+              },
             ),
             const SliverToBoxAdapter(child: SizedBox(height: 128)),
           ],
