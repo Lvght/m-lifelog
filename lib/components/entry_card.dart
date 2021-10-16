@@ -150,12 +150,26 @@ class EntryCard extends StatelessWidget {
             ],
           ),
           if (_entry.sentiment != null) _getSentimentIndicator(context),
-          const SizedBox(height: 16),
+
+          // Attached image.
+          if (_entry.image != null)
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 16),
+              child: AspectRatio(
+                aspectRatio: 4 / 3,
+                child: ClipRRect(
+                  child: Image.memory(
+                    _entry.image!,
+                    fit: BoxFit.cover,
+                  ),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+            ),
           if (_entry.title != null)
             Text(_entry.title!, style: Theme.of(context).textTheme.headline6),
           if (_entry.content != null)
             Text(_entry.content!, style: Theme.of(context).textTheme.bodyText2),
-          const SizedBox(height: 32),
           Divider(
             endIndent: MediaQuery.of(context).size.width * 0.8,
             color: Colors.black,

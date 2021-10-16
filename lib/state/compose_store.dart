@@ -17,7 +17,8 @@ abstract class _ComposeStoreBase with Store {
   Uint8List? image;
 
   @action
-  void setCurrentSentiment(int? v) => currentSentiment = v;
+  void setCurrentSentiment(int? v) =>
+      currentSentiment = currentSentiment == v ? null : v;
 
   @action
   void setDateTime(DateTime? v) => dateTime = v;

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:lifelog/screens/focus_screen.dart';
 import 'package:lifelog/state/compose_store.dart';
 import 'package:lifelog/state/master_store.dart';
 import 'package:provider/provider.dart';
@@ -49,6 +50,60 @@ class _ComposeScreenState extends State<ComposeScreen> {
     }
   }
 
+  void _focusModeSaveCallback(String? title, String? content) {
+    _titleController.text = title ?? '';
+    _contentController.text = content ?? '';
+  }
+
+  void _sendToFocusMode() {
+    FocusScope.of(context).requestFocus(FocusNode());
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (_) => FocusScreen(_focusModeSaveCallback,
+            _titleController.text, _contentController.text)));
+  }
+
+  void _closeComposeScreen() async {
+    if (_store.currentSentiment != null ||
+        _store.image != null ||
+        _titleController.text.isNotEmpty ||
+        _contentController.text.isNotEmpty) {
+      await showDialog(
+          context: context,
+          builder: (_) {
+            return Dialog(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text(
+                      'Você tem certeza de que deseja descartar sua entrada atual? '
+                      'Não será possível desfazer isso.',
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                            onPressed: Navigator.of(context).pop,
+                            child: const Text('MANTER')),
+                        TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text('DESCARTAR')),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            );
+          });
+    } else {
+      Navigator.of(context).pop();
+    }
+  }
+
   Future<void>? _getImage() async {
     final XFile? _file =
         await ImagePicker().pickImage(source: ImageSource.gallery);
@@ -62,6 +117,10 @@ class _ComposeScreenState extends State<ComposeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.close_rounded),
+          onPressed: _closeComposeScreen,
+        ),
         title: const Text('Nova entrada'),
         actions: [
           IconButton(
@@ -76,10 +135,12 @@ class _ComposeScreenState extends State<ComposeScreen> {
             padding: const EdgeInsets.fromLTRB(8, 8, 8, 128),
             child: Column(
               children: [
+                const SizedBox(height: 64),
                 Text(
                   'Como você está se sentindo?',
                   style: Theme.of(context).textTheme.headline5,
                 ),
+                const SizedBox(height: 8),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -132,74 +193,106 @@ class _ComposeScreenState extends State<ComposeScreen> {
                       Positioned(
                         right: 8,
                         top: 8,
-                        child: IconButton(
-                          icon: const Icon(Icons.remove_circle_rounded),
-                          onPressed: () {
-                            _store.setImage(null);
-                          },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white70,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: IconButton(
+                            icon: const Icon(Icons.remove_circle_rounded),
+                            onPressed: () {
+                              _store.setImage(null);
+                            },
+                          ),
                         ),
                       ),
                     ],
                   ),
-                const SizedBox(height: 32),
+                const SizedBox(height: 16),
+                TextButton.icon(
+                    onPressed: _sendToFocusMode,
+                    icon: const Icon(Icons.visibility),
+                    label: const Text('Modo foco')),
+                const SizedBox(height: 16),
                 TextField(
                   controller: _titleController,
-                  decoration: const InputDecoration.collapsed(
+                  decoration: InputDecoration(
                     hintText: 'Título',
+                    hintStyle: Theme.of(context)
+                        .inputDecorationTheme
+                        .hintStyle!
+                        .copyWith(
+                          fontWeight: FontWeight.normal,
+                        ),
                   ),
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline6!
+                      .copyWith(color: Colors.white),
                 ),
                 const SizedBox(height: 16),
                 TextField(
                   controller: _contentController,
                   maxLines: null,
-                  decoration: const InputDecoration.collapsed(
+                  decoration: const InputDecoration(
                     hintText: 'Conteúdo',
                   ),
                 ),
+                const SizedBox(height: 128),
+                Observer(builder: (context) {
+                  return SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        TextButton.icon(
+                          onPressed: () async => _invokeDateTimePicker(context),
+                          onLongPress: () => _store.setDateTime(null),
+                          icon: Icon(
+                            Icons.access_time_filled_rounded,
+                            color: _store.dateTime == null
+                                ? null
+                                : Theme.of(context).colorScheme.primary,
+                          ),
+                          label: Text(
+                            _store.dateTime == null
+                                ? 'Agora'
+                                : '${_store.dateTime!.day.toString().padLeft(2, '0')}/'
+                                    '${_store.dateTime!.month.toString().padLeft(2, '0')}/'
+                                    '${_store.dateTime!.year} '
+                                    '| ${_store.dateTime!.hour.toString().padLeft(2, '0')}'
+                                    ':${_store.dateTime!.minute.toString().padLeft(2, '0')}',
+                            style: TextStyle(
+                              color: _store.dateTime == null
+                                  ? null
+                                  : Theme.of(context).colorScheme.primary,
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () async => await _getImage(),
+                          icon: Icon(Icons.add_photo_alternate_rounded,
+                              color: _store.image == null
+                                  ? null
+                                  : Theme.of(context).colorScheme.primary),
+                        ),
+                        const IconButton(
+                          onPressed: null,
+                          icon: Icon(Icons.tag_rounded),
+                        ),
+                        const IconButton(
+                          onPressed: null,
+                          icon: Icon(Icons.add_location_alt_rounded),
+                        ),
+                        const IconButton(
+                          onPressed: null,
+                          icon: Icon(Icons.person_add_rounded),
+                        ),
+                      ],
+                    ),
+                  );
+                }),
               ],
             ),
-          ),
-        );
-      }),
-
-      // Avoid bottom sheet to be above keyboard.
-      resizeToAvoidBottomInset: false,
-      bottomSheet: Observer(builder: (context) {
-        return SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: [
-              TextButton.icon(
-                  onPressed: () async => _invokeDateTimePicker(context),
-                  onLongPress: () => _store.setDateTime(null),
-                  icon: const Icon(Icons.access_time_filled_rounded),
-                  label: Text(_store.dateTime == null
-                      ? 'Agora'
-                      : '${_store.dateTime!.day.toString().padLeft(2, '0')}/'
-                          '${_store.dateTime!.month.toString().padLeft(2, '0')}/'
-                          '${_store.dateTime!.year} '
-                          '| ${_store.dateTime!.hour.toString().padLeft(2, '0')}'
-                          ':${_store.dateTime!.minute.toString().padLeft(2, '0')}')),
-              IconButton(
-                onPressed: () async => await _getImage(),
-                icon: Icon(Icons.add_photo_alternate_rounded,
-                    color: _store.image == null
-                        ? null
-                        : Theme.of(context).colorScheme.primary),
-              ),
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.tag_rounded),
-              ),
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.add_location_alt_rounded),
-              ),
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.person_add_rounded),
-              ),
-            ],
           ),
         );
       }),
