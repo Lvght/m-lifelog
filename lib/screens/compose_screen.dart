@@ -243,10 +243,8 @@ class _ComposeScreenState extends State<ComposeScreen> {
                           fontWeight: FontWeight.normal,
                         ),
                   ),
-                  style: Theme.of(context)
-                      .textTheme
-                      .headline6!
-                      .copyWith(color: Colors.white),
+                  style: Theme.of(context).textTheme.headline6!.copyWith(
+                      color: Theme.of(context).colorScheme.background),
                 ),
                 const SizedBox(height: 16),
                 TextField(

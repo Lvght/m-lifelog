@@ -132,7 +132,7 @@ class Lifelog extends StatelessWidget {
       ),
       filled: true,
       fillColor: const Color(0xFFFEFEFE),
-      focusColor: Colors.white,
+      focusColor: Colors.black,
     ),
 
     // ANCHOR: Theme for TextButtons.
