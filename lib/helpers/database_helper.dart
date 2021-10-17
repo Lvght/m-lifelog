@@ -1,4 +1,4 @@
-import 'dart:io' show File;
+import 'dart:io' show Directory, File, FileSystemEntity, IOSink;
 
 import 'package:google_sign_in/google_sign_in.dart' as sign_in;
 import 'package:googleapis/drive/v3.dart' as drive;
@@ -13,6 +13,7 @@ class DatabaseHelper {
   }
 
   static Future<void> _onCreate(Database db, int version) async {
+    print('/!\\ Creating database...');
     await db
         .execute('CREATE TABLE Entries (id INTEGER PRIMARY KEY, title TEXT, '
             'content TEXT, feeling INT, created_at INT NOT NULL, image BLOB)');
@@ -20,7 +21,7 @@ class DatabaseHelper {
 
   static Future<Database?> initializeDatabase() async {
     Database _db = await openDatabase(
-      'lifelog.db',
+      join(await getDatabasesPath(), 'lifelog.db'),
       version: 1,
       onConfigure: _onConfigure,
       onCreate: _onCreate,
@@ -28,12 +29,24 @@ class DatabaseHelper {
     return _db;
   }
 
+  static Future<drive.DriveApi?> _getDriveApi() async {
+    sign_in.GoogleSignInAccount? account = await _loginToGoogleAccount();
+
+    final authHeaders = await account?.authHeaders;
+
+    if (authHeaders != null) {
+      final authenticatedClient = GoogleAuthHelper(authHeaders);
+      return drive.DriveApi(authenticatedClient);
+    }
+    return null;
+  }
+
   static Future<sign_in.GoogleSignInAccount?> _loginToGoogleAccount() async {
     final sign_in.GoogleSignIn googleSignIn =
         sign_in.GoogleSignIn.standard(scopes: [drive.DriveApi.driveFileScope]);
 
     if (await googleSignIn.isSignedIn()) {
-      googleSignIn.disconnect();
+      // googleSignIn.disconnect();
     }
 
     return await googleSignIn.signIn();
@@ -77,6 +90,53 @@ class DatabaseHelper {
 
       if (createFileResponse.driveId != null) {
         return true;
+      }
+    }
+
+    return false;
+  }
+
+  static Future<bool> restoreFromGoogleDrive() async {
+    drive.DriveApi? api = await _getDriveApi();
+
+    if (api != null) {
+      String? latestBackupFileId;
+
+      drive.FileList fileList = await api.files.list(
+        q: "name = 'lifelog.db' and mimeType = 'application/octet-stream' and trashed = false",
+        orderBy: 'createdTime',
+      );
+
+      if (fileList.files != null && fileList.files!.isNotEmpty) {
+        fileList.files!.forEach((drive.File e) {
+          print(e.id);
+        });
+
+        drive.File latestBackup = fileList.files!.last;
+        latestBackupFileId = latestBackup.id;
+      }
+
+      if (latestBackupFileId != null) {
+        // latestBackupFileId = '1PqgNU-k7xEmm4Pbmk11Ww_ZJOCfjc17g';
+        //drive.Media backupFile = await api.files.get(latestBackupFileId, downloadOptions: drive.DownloadOptions.fullMedia);
+
+        print('Seeking $latestBackupFileId');
+        Object fileGenericObject = await api.files.get(
+          latestBackupFileId,
+          downloadOptions: drive.DownloadOptions.fullMedia,
+        );
+
+        drive.Media media = fileGenericObject as drive.Media;
+        // print((await media.stream.).toString());
+
+        String databasePath = join(await getDatabasesPath(), 'lifelog.db');
+        IOSink databaseFileSink = File(databasePath).openWrite();
+
+        await databaseFileSink.addStream(media.stream);
+        await databaseFileSink.flush();
+        await databaseFileSink.close();
+
+        // databaseFile.writeAsBytes(media.stream as Uint8List);
       }
     }
 

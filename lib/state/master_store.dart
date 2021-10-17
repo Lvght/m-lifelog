@@ -34,6 +34,12 @@ abstract class _MasterStoreBase with Store {
     }
   }
 
+  Future<void>? closeDatabase() async {
+    if (_db != null) {
+      await _db!.close();
+    }
+  }
+
   /// Returns [true] if successful. [false], otherwise.
   Future<bool> initializeDatabase() async {
     _db = await DatabaseHelper.initializeDatabase();
