@@ -164,7 +164,7 @@ class DatabaseHelper {
         await databaseFileSink.flush();
         await databaseFileSink.close();
 
-        // databaseFile.writeAsBytes(media.stream as Uint8List);
+        return true;
       }
     }
 

@@ -17,7 +17,9 @@ class _OptionsScreenState extends State<OptionsScreen> {
   final _store = OptionsScreenStore();
 
   Future<void>? _backupToGoogleDriveCallback(BuildContext context) async {
-    showDialog(
+    bool uSure = false;
+
+    await showDialog(
         context: context,
         builder: (_) {
           return Dialog(
@@ -25,33 +27,74 @@ class _OptionsScreenState extends State<OptionsScreen> {
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-                children: const [
-                  Text('Carregando para o Google Drive. Aguarde...'),
-                  SizedBox(height: 16),
-                  CircularProgressIndicator(),
+                children: [
+                  const Text(
+                      'Deseja sobrescrever os dados do Google Drive pelos que estão'
+                      ' no aparelho?'),
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                          onPressed: () {
+                            uSure = false;
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text('CANCELAR')),
+                      TextButton(
+                          onPressed: () {
+                            uSure = true;
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text('SOBRESCREVER')),
+                    ],
+                  ),
                 ],
               ),
             ),
           );
         });
 
-    await Provider.of<MasterStore>(context, listen: false).closeDatabase();
-    await DatabaseHelper.backupToGoogleDrive();
-    await Provider.of<MasterStore>(context, listen: false).initializeDatabase();
+    if (uSure) {
+      showDialog(
+          context: context,
+          builder: (_) {
+            return Dialog(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: const [
+                    Text('Carregando para o Google Drive. Aguarde...'),
+                    SizedBox(height: 16),
+                    CircularProgressIndicator(),
+                  ],
+                ),
+              ),
+            );
+          });
 
-    _store.setIsLoggedIn(true);
+      await Provider.of<MasterStore>(context, listen: false).closeDatabase();
+      await DatabaseHelper.backupToGoogleDrive();
+      await Provider.of<MasterStore>(context, listen: false)
+          .initializeDatabase();
 
-    Navigator.of(context).pop();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text('Backup feito!'),
-        backgroundColor: Theme.of(context).colorScheme.primary,
-      ),
-    );
+      _store.setIsLoggedIn(true);
+
+      Navigator.of(context).pop();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Backup feito!'),
+          backgroundColor: Theme.of(context).colorScheme.primary,
+        ),
+      );
+    }
   }
 
   Future<void>? _restoreFromGoogleDriveCallback(BuildContext context) async {
-    showDialog(
+    bool uSure = false;
+
+    await showDialog(
         context: context,
         builder: (_) {
           return Dialog(
@@ -59,27 +102,73 @@ class _OptionsScreenState extends State<OptionsScreen> {
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-                children: const [
-                  Text(
-                      'Carregando backup mais recente do Google Drive. Aguarde...'),
-                  SizedBox(height: 16),
-                  CircularProgressIndicator(),
+                children: [
+                  const Text(
+                      'Deseja sobrescrever os dados do aparelho pelos que estão'
+                      ' no Google Drive?'),
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                          onPressed: () {
+                            uSure = false;
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text('CANCELAR')),
+                      TextButton(
+                          onPressed: () {
+                            uSure = true;
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text('SOBRESCREVER')),
+                    ],
+                  ),
                 ],
               ),
             ),
           );
         });
 
-    await Provider.of<MasterStore>(context, listen: false).closeDatabase();
-    await DatabaseHelper.restoreFromGoogleDrive();
-    await Provider.of<MasterStore>(context, listen: false).initializeDatabase();
-    await Provider.of<MasterStore>(context, listen: false).getContent();
+    if (uSure) {
+      showDialog(
+          context: context,
+          builder: (_) {
+            return Dialog(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: const [
+                    Text(
+                        'Carregando backup mais recente do Google Drive. Aguarde...'),
+                    SizedBox(height: 16),
+                    CircularProgressIndicator(),
+                  ],
+                ),
+              ),
+            );
+          });
 
-    _store.setIsLoggedIn(true);
+      await Provider.of<MasterStore>(context, listen: false).closeDatabase();
+      final bool success = await DatabaseHelper.restoreFromGoogleDrive();
 
-    Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (_) => const SplashScreen()),
-        (route) => false);
+      if (success) {
+        await Provider.of<MasterStore>(context, listen: false)
+            .initializeDatabase();
+        await Provider.of<MasterStore>(context, listen: false).getContent();
+
+        _store.setIsLoggedIn(true);
+
+        Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (_) => const SplashScreen()),
+            (route) => false);
+      } else {
+        Navigator.of(context).pop();
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Falha ao carregar dados')));
+      }
+    }
   }
 
   Future<void>? _revokeGoogleLoginCallback() async {
