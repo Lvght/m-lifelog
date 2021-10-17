@@ -58,37 +58,74 @@ class DatabaseHelper {
       final authHeaders = await account.authHeaders;
       final authenticatedClient = GoogleAuthHelper(authHeaders);
 
-      final driveAPI = drive.DriveApi(authenticatedClient);
+      final api = drive.DriveApi(authenticatedClient);
 
       // Gets the database file
       final directoryPath = await getDatabasesPath();
       File database = File(join(directoryPath, 'lifelog.db'));
 
-      drive.FileList fileList = await driveAPI.files.list(
-        q: "mimeType = 'application/vnd.google-apps.folder' and name = 'lifelog'",
+      // Get backup folder information.
+      drive.FileList backupFolderList = await api.files.list(
+        q: "mimeType = 'application/vnd.google-apps.folder' and name = 'lifelog' and trashed = false",
+        orderBy: 'createdTime',
       );
+
       String? parentFolderId;
-      if (fileList.files != null && fileList.files!.isNotEmpty) {
-        parentFolderId = fileList.files!.first.id;
+      if (backupFolderList.files != null &&
+          backupFolderList.files!.isNotEmpty) {
+        // User may have created another folder with same name. Take the oldest.
+        parentFolderId = backupFolderList.files!.first.id;
       } else {
+        // Folder does not exist. Create it.
         drive.File backupFolder = drive.File(
-            name: 'lifelog', mimeType: 'application/vnd.google-apps.folder');
+          name: 'lifelog',
+          mimeType: 'application/vnd.google-apps.folder',
+        );
 
-        drive.File createFolderResponse =
-            await driveAPI.files.create(backupFolder);
-
+        drive.File createFolderResponse = await api.files.create(backupFolder);
         parentFolderId = createFolderResponse.id;
       }
 
-      drive.File backupFile = drive.File(
-          name: 'lifelog.db',
-          parents: parentFolderId != null ? [parentFolderId] : null);
+      // Get backup file infomation.
+      drive.FileList backupFileList = await api.files.list(
+        q: "name = 'lifelog.db' and mimeType = 'application/octet-stream' and trashed = false",
+        orderBy: 'createdTime',
+      );
 
-      drive.File createFileResponse = await driveAPI.files.create(backupFile,
-          uploadMedia: drive.Media(database.openRead(), database.lengthSync()));
+      String? latestBackupFileId;
+      if (backupFileList.files != null && backupFileList.files!.isNotEmpty) {
+        // User may have multiple files inside directory. Take the most recent.
+        drive.File latestBackup = backupFileList.files!.last;
+        latestBackupFileId = latestBackup.id;
+      }
 
-      if (createFileResponse.driveId != null) {
-        return true;
+      // If a file already exists, attempts to overwrite it.
+      if (latestBackupFileId != null) {
+        drive.File backupFile = drive.File(name: 'lifelog.db');
+
+        drive.File updateFileResponse = await api.files.update(
+          backupFile,
+          latestBackupFileId,
+          addParents: parentFolderId,
+          uploadMedia: drive.Media(database.openRead(), database.lengthSync()),
+        );
+
+        if (updateFileResponse.id != null) {
+          return true;
+        }
+      } else {
+        // No previous backup. Create a new one.
+        drive.File backupFile = drive.File(
+            name: 'lifelog.db',
+            parents: parentFolderId != null ? [parentFolderId] : null);
+
+        drive.File createFileResponse = await api.files.create(backupFile,
+            uploadMedia:
+                drive.Media(database.openRead(), database.lengthSync()));
+
+        if (createFileResponse.id != null) {
+          return true;
+        }
       }
     }
 
