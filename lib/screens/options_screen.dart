@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:lifelog/helpers/database_helper.dart';
 import 'package:lifelog/screens/splash_screen.dart';
@@ -28,9 +29,8 @@ class _OptionsScreenState extends State<OptionsScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Text(
-                      'Deseja sobrescrever os dados do Google Drive pelos que estão'
-                      ' no aparelho?'),
+                  Text(AppLocalizations.of(context)!
+                      .overwriteGDriveConfirmation),
                   const SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -40,13 +40,13 @@ class _OptionsScreenState extends State<OptionsScreen> {
                             uSure = false;
                             Navigator.of(context).pop();
                           },
-                          child: const Text('CANCELAR')),
+                          child: Text(AppLocalizations.of(context)!.cancel)),
                       TextButton(
                           onPressed: () {
                             uSure = true;
                             Navigator.of(context).pop();
                           },
-                          child: const Text('SOBRESCREVER')),
+                          child: Text(AppLocalizations.of(context)!.overwrite)),
                     ],
                   ),
                 ],
@@ -64,10 +64,11 @@ class _OptionsScreenState extends State<OptionsScreen> {
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
-                  children: const [
-                    Text('Carregando para o Google Drive. Aguarde...'),
-                    SizedBox(height: 16),
-                    CircularProgressIndicator(),
+                  children: [
+                    Text(
+                        AppLocalizations.of(context)!.backupToGDriveInProgress),
+                    const SizedBox(height: 16),
+                    const CircularProgressIndicator(),
                   ],
                 ),
               ),
@@ -84,7 +85,7 @@ class _OptionsScreenState extends State<OptionsScreen> {
       Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('Backup feito!'),
+          content: Text(AppLocalizations.of(context)!.backupToGDriveSuccessful),
           backgroundColor: Theme.of(context).colorScheme.primary,
         ),
       );
@@ -115,13 +116,13 @@ class _OptionsScreenState extends State<OptionsScreen> {
                             uSure = false;
                             Navigator.of(context).pop();
                           },
-                          child: const Text('CANCELAR')),
+                          child: Text(AppLocalizations.of(context)!.cancel)),
                       TextButton(
                           onPressed: () {
                             uSure = true;
                             Navigator.of(context).pop();
                           },
-                          child: const Text('SOBRESCREVER')),
+                          child: Text(AppLocalizations.of(context)!.overwrite)),
                     ],
                   ),
                 ],
@@ -139,11 +140,10 @@ class _OptionsScreenState extends State<OptionsScreen> {
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
-                  children: const [
-                    Text(
-                        'Carregando backup mais recente do Google Drive. Aguarde...'),
-                    SizedBox(height: 16),
-                    CircularProgressIndicator(),
+                  children: [
+                    Text(AppLocalizations.of(context)!.loadingGDriveData),
+                    const SizedBox(height: 16),
+                    const CircularProgressIndicator(),
                   ],
                 ),
               ),
@@ -165,8 +165,9 @@ class _OptionsScreenState extends State<OptionsScreen> {
             (route) => false);
       } else {
         Navigator.of(context).pop();
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Falha ao carregar dados')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content:
+                Text(AppLocalizations.of(context)!.loadingGDriveDataFailed)));
       }
     }
   }
@@ -176,7 +177,7 @@ class _OptionsScreenState extends State<OptionsScreen> {
     _store.setIsLoggedIn(false);
 
     ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Você saiu da sua conta Google')));
+        SnackBar(content: Text(AppLocalizations.of(context)!.googleLogout)));
   }
 
   @override
@@ -189,14 +190,14 @@ class _OptionsScreenState extends State<OptionsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Opções'),
+          title: Text(AppLocalizations.of(context)!.labelOptionsPage),
         ),
         body: Observer(builder: (context) {
           return ListView(
             children: [
               if (_store.isLoggedIn)
                 ListTile(
-                  title: Text('Revogar login na conta Google atual',
+                  title: Text(AppLocalizations.of(context)!.revokeGDriveLogin,
                       style: Theme.of(context).textTheme.bodyText2),
                   trailing: Icon(
                     Icons.logout_rounded,
@@ -206,7 +207,7 @@ class _OptionsScreenState extends State<OptionsScreen> {
                 ),
               ListTile(
                 title: Text(
-                  'Fazer backup no Google Drive',
+                  AppLocalizations.of(context)!.backupToGDrive,
                   style: Theme.of(context).textTheme.bodyText2,
                 ),
                 trailing: Icon(Icons.backup_rounded,
@@ -215,7 +216,7 @@ class _OptionsScreenState extends State<OptionsScreen> {
               ),
               ListTile(
                 title: Text(
-                  'Restaurar backup do Google Drive',
+                  AppLocalizations.of(context)!.restoreFromGDrive,
                   style: Theme.of(context).textTheme.bodyText2,
                 ),
                 trailing: Icon(Icons.cloud_download_rounded,

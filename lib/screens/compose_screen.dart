@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:lifelog/models/entry.dart';
 import 'package:lifelog/screens/focus_screen.dart';
 import 'package:lifelog/state/compose_store.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ComposeScreen extends StatefulWidget {
   const ComposeScreen(
@@ -67,22 +68,21 @@ class _ComposeScreenState extends State<ComposeScreen> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Text(
-                      'Você tem certeza de que deseja descartar sua entrada atual? '
-                      'Não será possível desfazer isso.',
+                    Text(
+                      AppLocalizations.of(context)!.discardEntryConfirmation,
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         TextButton(
                             onPressed: Navigator.of(context).pop,
-                            child: const Text('MANTER')),
+                            child: Text(AppLocalizations.of(context)!.keep)),
                         TextButton(
                             onPressed: () {
                               Navigator.of(context).pop();
                               Navigator.of(context).pop();
                             },
-                            child: const Text('DESCARTAR')),
+                            child: Text(AppLocalizations.of(context)!.discard)),
                       ],
                     )
                   ],
@@ -128,7 +128,7 @@ class _ComposeScreenState extends State<ComposeScreen> {
           icon: const Icon(Icons.close_rounded),
           onPressed: _closeComposeScreen,
         ),
-        title: const Text('Nova entrada'),
+        title: Text(AppLocalizations.of(context)!.newEntry),
         actions: [
           IconButton(
             onPressed: () async {
@@ -155,7 +155,7 @@ class _ComposeScreenState extends State<ComposeScreen> {
               children: [
                 const SizedBox(height: 64),
                 Text(
-                  'Como você está se sentindo?',
+                  AppLocalizations.of(context)!.howRU,
                   style: Theme.of(context).textTheme.headline5,
                 ),
                 const SizedBox(height: 8),
@@ -230,12 +230,12 @@ class _ComposeScreenState extends State<ComposeScreen> {
                 TextButton.icon(
                     onPressed: _sendToFocusMode,
                     icon: const Icon(Icons.visibility),
-                    label: const Text('Modo foco')),
+                    label: Text(AppLocalizations.of(context)!.focusMode)),
                 const SizedBox(height: 16),
                 TextField(
                   controller: _titleController,
                   decoration: InputDecoration(
-                    hintText: 'Título',
+                    hintText: AppLocalizations.of(context)!.title,
                     hintStyle: Theme.of(context)
                         .inputDecorationTheme
                         .hintStyle!
@@ -252,8 +252,8 @@ class _ComposeScreenState extends State<ComposeScreen> {
                 TextField(
                   controller: _contentController,
                   maxLines: null,
-                  decoration: const InputDecoration(
-                    hintText: 'Conteúdo',
+                  decoration: InputDecoration(
+                    hintText: AppLocalizations.of(context)!.content,
                   ),
                 ),
                 const SizedBox(height: 128),
@@ -273,7 +273,7 @@ class _ComposeScreenState extends State<ComposeScreen> {
                           ),
                           label: Text(
                             _store.dateTime == null
-                                ? 'Agora'
+                                ? AppLocalizations.of(context)!.now
                                 : '${_store.dateTime!.day.toString().padLeft(2, '0')}/'
                                     '${_store.dateTime!.month.toString().padLeft(2, '0')}/'
                                     '${_store.dateTime!.year} '

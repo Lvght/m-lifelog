@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lifelog/models/entry.dart';
 import 'package:lifelog/screens/compose_screen.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 enum EntryCardMenuActions { delete, edit, star }
 
@@ -12,27 +13,27 @@ class EntryCard extends StatelessWidget {
   final Future<void>? Function(Entry) deleteFn;
   final Future<void>? Function(Entry) editFn;
 
-  String _weekday(int v) {
+  String _weekday(int v, BuildContext context) {
     switch (v) {
       case DateTime.sunday:
-        return 'Domingo';
+        return AppLocalizations.of(context)!.sunday;
       case DateTime.monday:
-        return 'Segunda-feira';
+        return AppLocalizations.of(context)!.monday;
       case DateTime.tuesday:
-        return 'Terça-feira';
+        return AppLocalizations.of(context)!.tuesday;
       case DateTime.wednesday:
-        return 'Quarta-feira';
+        return AppLocalizations.of(context)!.wednesday;
       case DateTime.thursday:
-        return 'Quinta-feira';
+        return AppLocalizations.of(context)!.thursday;
       case DateTime.friday:
-        return 'Sexta-feira';
+        return AppLocalizations.of(context)!.friday;
       default:
-        return 'Sábado';
+        return AppLocalizations.of(context)!.saturday;
     }
   }
 
   /// Returns the Entry Card timestamp indicator.
-  String _entryTimestampIndicator() {
+  String _entryTimestampIndicator(BuildContext context) {
     DateTime now = DateTime.now();
 
     // Entry may be from yesterday, but has been written in less than 24hrs ago.
@@ -45,9 +46,9 @@ class EntryCard extends StatelessWidget {
     /// Shows 'Today', 'Yesterday' or the entry date in dd/mm/yyyy.
     String weekdayIndicator = '';
     if (daysDifference == 0) {
-      weekdayIndicator = 'Hoje';
+      weekdayIndicator = AppLocalizations.of(context)!.today;
     } else if (daysDifference == 1) {
-      weekdayIndicator = 'Ontem';
+      weekdayIndicator = AppLocalizations.of(context)!.yesterday;
     } else {
       weekdayIndicator = '${_entry.createdAt.day.toString().padLeft(2, '0')}/'
           '${_entry.createdAt.month.toString().padLeft(2, '0')}/'
@@ -56,7 +57,7 @@ class EntryCard extends StatelessWidget {
 
     // hh:mm - [Today|dd/mm/yyyy], Weekday
     return '${_entry.createdAt.hour.toString().padLeft(2, '0')}:'
-        '${_entry.createdAt.minute.toString().padLeft(2, '0')} - $weekdayIndicator, ${_weekday(_entry.createdAt.weekday)}';
+        '${_entry.createdAt.minute.toString().padLeft(2, '0')} - $weekdayIndicator, ${_weekday(_entry.createdAt.weekday, context)}';
   }
 
   /// Returns the icon and text combination expressing the entries sentiment.
@@ -67,23 +68,23 @@ class EntryCard extends StatelessWidget {
     switch (_entry.sentiment) {
       case 1:
         icon = const Icon(Icons.sentiment_very_satisfied_rounded);
-        text = 'Excelente';
+        text = AppLocalizations.of(context)!.mood1;
         break;
       case 2:
         icon = const Icon(Icons.sentiment_satisfied_rounded);
-        text = 'Bem';
+        text = AppLocalizations.of(context)!.mood2;
         break;
       case 3:
         icon = const Icon(Icons.sentiment_neutral_rounded);
-        text = 'Normal';
+        text = AppLocalizations.of(context)!.mood3;
         break;
       case 4:
         icon = const Icon(Icons.sentiment_dissatisfied_rounded);
-        text = 'Mal';
+        text = AppLocalizations.of(context)!.mood4;
         break;
       case 5:
         icon = const Icon(Icons.sentiment_very_dissatisfied_rounded);
-        text = 'Péssimo';
+        text = AppLocalizations.of(context)!.mood5;
         break;
       default:
         return const SizedBox();
@@ -130,7 +131,7 @@ class EntryCard extends StatelessWidget {
                 children: [
                   const Icon(Icons.access_time_filled),
                   const SizedBox(width: 8),
-                  Text(_entryTimestampIndicator(),
+                  Text(_entryTimestampIndicator(context),
                       style: Theme.of(context).textTheme.bodyText1)
                 ],
               ),
@@ -168,7 +169,7 @@ class EntryCard extends StatelessWidget {
                         Icon(Icons.edit_rounded,
                             color: Theme.of(context).colorScheme.onSecondary),
                         const SizedBox(width: 8),
-                        const Text('Editar'),
+                        Text(AppLocalizations.of(context)!.edit),
                       ],
                     ),
                     value: EntryCardMenuActions.edit,
@@ -179,7 +180,7 @@ class EntryCard extends StatelessWidget {
                         Icon(Icons.delete_rounded,
                             color: Theme.of(context).colorScheme.onSecondary),
                         const SizedBox(width: 8),
-                        const Text('Apagar'),
+                        Text(AppLocalizations.of(context)!.delete),
                       ],
                     ),
                     value: EntryCardMenuActions.delete,

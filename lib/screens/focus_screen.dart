@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class FocusScreen extends StatefulWidget {
   const FocusScreen(this._saveCallback, this._title, this._content, {Key? key})
@@ -52,7 +53,7 @@ class _FocusScreenState extends State<FocusScreen> {
               TextField(
                 controller: _titleController,
                 decoration: InputDecoration.collapsed(
-                    hintText: 'Título',
+                    hintText: AppLocalizations.of(context)!.title,
                     hintStyle: Theme.of(context).textTheme.headline6!.copyWith(
                         color: Theme.of(context)
                             .colorScheme
@@ -68,8 +69,8 @@ class _FocusScreenState extends State<FocusScreen> {
                 autofocus: true,
                 controller: _contentController,
                 maxLines: null,
-                decoration:
-                    const InputDecoration.collapsed(hintText: 'Conteúdo'),
+                decoration: InputDecoration.collapsed(
+                    hintText: AppLocalizations.of(context)!.content),
                 style: Theme.of(context)
                     .textTheme
                     .bodyText2!

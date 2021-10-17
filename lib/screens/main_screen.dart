@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:lifelog/components/entry_card.dart';
 import 'package:lifelog/models/entry.dart';
@@ -117,7 +118,7 @@ class _MainScreenState extends State<MainScreen> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _fobCallback,
-        label: const Text('Nova entrada'),
+        label: Text(AppLocalizations.of(context)!.newEntry),
         icon: const Icon(Icons.add_rounded),
       ),
     );
