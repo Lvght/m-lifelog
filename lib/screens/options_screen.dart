@@ -39,6 +39,8 @@ class _OptionsScreenState extends State<OptionsScreen> {
     await DatabaseHelper.backupToGoogleDrive();
     await Provider.of<MasterStore>(context, listen: false).initializeDatabase();
 
+    _store.setIsLoggedIn(true);
+
     Navigator.of(context).pop();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -72,6 +74,8 @@ class _OptionsScreenState extends State<OptionsScreen> {
     await DatabaseHelper.restoreFromGoogleDrive();
     await Provider.of<MasterStore>(context, listen: false).initializeDatabase();
     await Provider.of<MasterStore>(context, listen: false).getContent();
+
+    _store.setIsLoggedIn(true);
 
     Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (_) => const SplashScreen()),
