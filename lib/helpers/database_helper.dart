@@ -1,4 +1,4 @@
-import 'dart:io' show Directory, File, FileSystemEntity, IOSink;
+import 'dart:io' show File, IOSink;
 
 import 'package:google_sign_in/google_sign_in.dart' as sign_in;
 import 'package:googleapis/drive/v3.dart' as drive;
@@ -13,7 +13,6 @@ class DatabaseHelper {
   }
 
   static Future<void> _onCreate(Database db, int version) async {
-    print('/!\\ Creating database...');
     await db
         .execute('CREATE TABLE Entries (id INTEGER PRIMARY KEY, title TEXT, '
             'content TEXT, feeling INT, created_at INT NOT NULL, image BLOB)');
@@ -108,19 +107,11 @@ class DatabaseHelper {
       );
 
       if (fileList.files != null && fileList.files!.isNotEmpty) {
-        fileList.files!.forEach((drive.File e) {
-          print(e.id);
-        });
-
         drive.File latestBackup = fileList.files!.last;
         latestBackupFileId = latestBackup.id;
       }
 
       if (latestBackupFileId != null) {
-        // latestBackupFileId = '1PqgNU-k7xEmm4Pbmk11Ww_ZJOCfjc17g';
-        //drive.Media backupFile = await api.files.get(latestBackupFileId, downloadOptions: drive.DownloadOptions.fullMedia);
-
-        print('Seeking $latestBackupFileId');
         Object fileGenericObject = await api.files.get(
           latestBackupFileId,
           downloadOptions: drive.DownloadOptions.fullMedia,
