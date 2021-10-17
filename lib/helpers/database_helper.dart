@@ -133,4 +133,18 @@ class DatabaseHelper {
 
     return false;
   }
+
+  static Future<bool> isLoggedIn() async {
+    final sign_in.GoogleSignIn googleSignIn =
+        sign_in.GoogleSignIn.standard(scopes: [drive.DriveApi.driveFileScope]);
+
+    return await googleSignIn.isSignedIn();
+  }
+
+  static Future<void>? logoutFromGoogle() async {
+    final sign_in.GoogleSignIn googleSignIn =
+        sign_in.GoogleSignIn.standard(scopes: [drive.DriveApi.driveFileScope]);
+
+    await googleSignIn.signOut();
+  }
 }

@@ -1,11 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:lifelog/helpers/database_helper.dart';
 import 'package:lifelog/screens/splash_screen.dart';
 import 'package:lifelog/state/master_store.dart';
+import 'package:lifelog/state/options_screen_store.dart';
 import 'package:provider/provider.dart';
 
-class OptionsScreen extends StatelessWidget {
+class OptionsScreen extends StatefulWidget {
   const OptionsScreen({Key? key}) : super(key: key);
+
+  @override
+  State<OptionsScreen> createState() => _OptionsScreenState();
+}
+
+class _OptionsScreenState extends State<OptionsScreen> {
+  final _store = OptionsScreenStore();
 
   Future<void>? _backupToGoogleDriveCallback(BuildContext context) async {
     showDialog(
@@ -69,33 +78,59 @@ class OptionsScreen extends StatelessWidget {
         (route) => false);
   }
 
+  Future<void>? _revokeGoogleLoginCallback() async {
+    await DatabaseHelper.logoutFromGoogle();
+    _store.setIsLoggedIn(false);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Você saiu da sua conta Google')));
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    DatabaseHelper.isLoggedIn().then((value) => _store.setIsLoggedIn(value));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
           title: const Text('Opções'),
         ),
-        body: ListView(
-          children: [
-            ListTile(
-              title: Text(
-                'Fazer backup no Google Drive',
-                style: Theme.of(context).textTheme.bodyText2,
+        body: Observer(builder: (context) {
+          return ListView(
+            children: [
+              if (_store.isLoggedIn)
+                ListTile(
+                  title: Text('Revogar login na conta Google atual',
+                      style: Theme.of(context).textTheme.bodyText2),
+                  trailing: Icon(
+                    Icons.logout_rounded,
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
+                  onTap: _revokeGoogleLoginCallback,
+                ),
+              ListTile(
+                title: Text(
+                  'Fazer backup no Google Drive',
+                  style: Theme.of(context).textTheme.bodyText2,
+                ),
+                trailing: Icon(Icons.backup_rounded,
+                    color: Theme.of(context).colorScheme.secondary),
+                onTap: () => _backupToGoogleDriveCallback(context),
               ),
-              trailing: Icon(Icons.backup_rounded,
-                  color: Theme.of(context).colorScheme.secondary),
-              onTap: () => _backupToGoogleDriveCallback(context),
-            ),
-            ListTile(
-              title: Text(
-                'Restaurar backup do Google Drive',
-                style: Theme.of(context).textTheme.bodyText2,
-              ),
-              trailing: Icon(Icons.cloud_download_rounded,
-                  color: Theme.of(context).colorScheme.secondary),
-              onTap: () => _restoreFromGoogleDriveCallback(context),
-            )
-          ],
-        ));
+              ListTile(
+                title: Text(
+                  'Restaurar backup do Google Drive',
+                  style: Theme.of(context).textTheme.bodyText2,
+                ),
+                trailing: Icon(Icons.cloud_download_rounded,
+                    color: Theme.of(context).colorScheme.secondary),
+                onTap: () => _restoreFromGoogleDriveCallback(context),
+              )
+            ],
+          );
+        }));
   }
 }
