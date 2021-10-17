@@ -32,10 +32,10 @@ class _WrapperState extends State<Wrapper> {
           currentIndex: _index,
           items: [
             BottomNavigationBarItem(
-                icon: Icon(Icons.home_rounded),
+                icon: const Icon(Icons.home_rounded),
                 label: AppLocalizations.of(context)!.labelHomePage),
             BottomNavigationBarItem(
-                icon: Icon(Icons.menu_rounded),
+                icon: const Icon(Icons.menu_rounded),
                 label: AppLocalizations.of(context)!.labelOptionsPage),
           ],
         ));

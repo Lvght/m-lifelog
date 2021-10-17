@@ -3,6 +3,7 @@
     "@helloWorld": {
         "description": "The conventional newborn programmer greeting"
     },
+    "thisIsEmpty": "😔 Looks like there's nothing here... yet.",
     "labelHomePage": "Home",
     "labelOptionsPage": "Options",
     "googleLogout": "You logged out successfully",
@@ -14,6 +15,7 @@
     "loadingGDriveData": "Loading most recent backup from Google Drive. Please, wait...",
     "loadingGDriveDataFailed": "Loading data failed.",
     "overwriteGDriveConfirmation": "Would you like to overwrite your Google Drive data with what's on your device?",
+    "overwriteDeviceConfirmation": "Would you like to overwrite your device data with what's on your Google Drive?",
     "keep": "KEEP EDITING",
     "discard": "DISCARD",
     "discardEntryConfirmation": "Are you sure you want to discard your current entry? You will not be able to undo this.",

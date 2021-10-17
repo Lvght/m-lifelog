@@ -104,9 +104,8 @@ class _OptionsScreenState extends State<OptionsScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Text(
-                      'Deseja sobrescrever os dados do aparelho pelos que estão'
-                      ' no Google Drive?'),
+                  Text(AppLocalizations.of(context)!
+                      .overwriteDeviceConfirmation),
                   const SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,

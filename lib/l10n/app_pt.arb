@@ -1,5 +1,6 @@
 {
     "helloWorld": "Olá, mundo!",
+    "thisIsEmpty": "😔 Parece que não há nada aqui... ainda.",
     "labelHomePage": "Diário",
     "labelOptionsPage": "Opções",
     "googleLogout": "Você saiu da sua conta Google",
@@ -11,6 +12,7 @@
     "loadingGDriveData": "Carregando backup mais recente do Google Drive. Aguarde...",
     "loadingGDriveDataFailed": "Falha ao carregar dados.",
     "overwriteGDriveConfirmation": "Deseja sobrescrever os dados do Google Drive pelos que estão no aparelho?",
+    "overwriteDeviceConfirmation": "Deseja sobrescrever os dados do aparelho pelos que estão no Google Drive?",
     "keep": "MANTER",
     "discard": "DESCARTAR",
     "discardEntryConfirmation": "Você tem certeza de que deseja descartar sua entrada atual? Não será possível desfazer isso.",

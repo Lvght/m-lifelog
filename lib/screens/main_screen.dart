@@ -97,8 +97,7 @@ class _MainScreenState extends State<MainScreen> {
                   return SliverFillRemaining(
                     child: Container(
                       padding: const EdgeInsets.fromLTRB(16, 64, 16, 16),
-                      child: const Text(
-                          '😔 Parece que não há nada aqui... ainda.'),
+                      child: Text(AppLocalizations.of(context)!.thisIsEmpty),
                     ),
                   );
                 }
