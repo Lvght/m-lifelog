@@ -220,7 +220,7 @@ class EntryCard extends StatelessWidget {
             ),
           Divider(
             endIndent: MediaQuery.of(context).size.width * 0.8,
-            color: Colors.black,
+            color: Theme.of(context).colorScheme.secondary,
           ),
         ],
       ),

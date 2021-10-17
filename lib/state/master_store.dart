@@ -19,6 +19,15 @@ abstract class _MasterStoreBase with Store {
   bool darkTheme = false;
 
   @action
+  Future<void> setDarkTheme(bool v) async {
+    darkTheme = v;
+
+    if (_db != null) {
+      await _db!.update('User', {'dark_theme': v ? 1 : 0});
+    }
+  }
+
+  @action
   Future<void> getContent() async {
     if (_db != null && !_exausted) {
       await _db!.transaction((txn) async {
@@ -58,7 +67,7 @@ abstract class _MasterStoreBase with Store {
 
     if (_db != null) {
       List<Map<String, Object?>> r = await _db!.query('User', limit: 1);
-      darkTheme = r.first['dark_theme'] as int == 0;
+      darkTheme = (r.first['dark_theme'] as int) == 1;
 
       return true;
     }

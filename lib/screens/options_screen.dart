@@ -222,6 +222,22 @@ class _OptionsScreenState extends State<OptionsScreen> {
                 trailing: Icon(Icons.cloud_download_rounded,
                     color: Theme.of(context).colorScheme.secondary),
                 onTap: () => _restoreFromGoogleDriveCallback(context),
+              ),
+              ListTile(
+                title: Text(
+                  Provider.of<MasterStore>(context, listen: false).darkTheme
+                      ? AppLocalizations.of(context)!.disableDarkTheme
+                      : AppLocalizations.of(context)!.activateDarkTheme,
+                  style: Theme.of(context).textTheme.bodyText2,
+                ),
+                trailing: Icon(Icons.dark_mode_rounded,
+                    color: Theme.of(context).colorScheme.secondary),
+                onTap: () async {
+                  await Provider.of<MasterStore>(context, listen: false)
+                      .setDarkTheme(
+                          !Provider.of<MasterStore>(context, listen: false)
+                              .darkTheme);
+                },
               )
             ],
           );

@@ -26,14 +26,14 @@ class _FocusScreenState extends State<FocusScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.secondary,
+      backgroundColor: const Color(0xFF191919),
       appBar: AppBar(
         leading: const SizedBox(),
         title: Image.asset(
           'lib/res/compact_full_logo_white.png',
           height: 28,
         ),
-        backgroundColor: Theme.of(context).colorScheme.secondary,
+        backgroundColor: const Color(0xFF191919),
         actions: [
           IconButton(
               onPressed: () {
@@ -41,7 +41,8 @@ class _FocusScreenState extends State<FocusScreen> {
                     _titleController.text, _contentController.text);
                 Navigator.of(context).pop();
               },
-              icon: const Icon(Icons.check_circle_rounded))
+              icon: const Icon(Icons.check_circle_rounded,
+                  color: Color(0xFFFEFEFE)))
         ],
       ),
       body: SingleChildScrollView(
@@ -55,14 +56,11 @@ class _FocusScreenState extends State<FocusScreen> {
                 decoration: InputDecoration.collapsed(
                     hintText: AppLocalizations.of(context)!.title,
                     hintStyle: Theme.of(context).textTheme.headline6!.copyWith(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onSecondary
-                            .withOpacity(0.54))),
+                        color: const Color(0xFFFEFEFE).withOpacity(0.54))),
                 style: Theme.of(context)
                     .textTheme
                     .headline6!
-                    .copyWith(color: Theme.of(context).colorScheme.onSecondary),
+                    .copyWith(color: const Color(0xFFFEFEFE)),
               ),
               const SizedBox(height: 16),
               TextField(
@@ -70,11 +68,13 @@ class _FocusScreenState extends State<FocusScreen> {
                 controller: _contentController,
                 maxLines: null,
                 decoration: InputDecoration.collapsed(
-                    hintText: AppLocalizations.of(context)!.content),
+                    hintText: AppLocalizations.of(context)!.content,
+                    hintStyle: Theme.of(context).textTheme.bodyText2!.copyWith(
+                        color: const Color(0xFFFEFEFE).withOpacity(0.54))),
                 style: Theme.of(context)
                     .textTheme
                     .bodyText2!
-                    .copyWith(color: Theme.of(context).colorScheme.onSecondary),
+                    .copyWith(color: const Color(0xFFFEFEFE)),
               ),
             ],
           ),

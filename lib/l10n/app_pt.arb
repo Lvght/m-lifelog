@@ -1,6 +1,8 @@
 {
     "helloWorld": "Olá, mundo!",
     "thisIsEmpty": "😔 Parece que não há nada aqui... ainda.",
+    "activateDarkTheme": "Ativar o tema escuro",
+    "disableDarkTheme": "Desativar o tema escuro",
     "labelHomePage": "Diário",
     "labelOptionsPage": "Opções",
     "googleLogout": "Você saiu da sua conta Google",

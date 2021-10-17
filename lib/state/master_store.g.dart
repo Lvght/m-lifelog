@@ -24,6 +24,14 @@ mixin _$MasterStore on _MasterStoreBase, Store {
     });
   }
 
+  final _$setDarkThemeAsyncAction =
+      AsyncAction('_MasterStoreBase.setDarkTheme');
+
+  @override
+  Future<void> setDarkTheme(bool v) {
+    return _$setDarkThemeAsyncAction.run(() => super.setDarkTheme(v));
+  }
+
   final _$getContentAsyncAction = AsyncAction('_MasterStoreBase.getContent');
 
   @override

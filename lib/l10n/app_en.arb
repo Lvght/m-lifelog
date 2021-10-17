@@ -4,6 +4,8 @@
         "description": "The conventional newborn programmer greeting"
     },
     "thisIsEmpty": "😔 Looks like there's nothing here... yet.",
+    "activateDarkTheme": "Enable dark theme",
+    "disableDarkTheme": "Disable dark theme",
     "labelHomePage": "Home",
     "labelOptionsPage": "Options",
     "googleLogout": "You logged out successfully",
