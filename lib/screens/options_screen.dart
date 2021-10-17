@@ -155,7 +155,8 @@ class _OptionsScreenState extends State<OptionsScreen> {
       if (success) {
         await Provider.of<MasterStore>(context, listen: false)
             .initializeDatabase();
-        await Provider.of<MasterStore>(context, listen: false).getContent();
+
+        await Provider.of<MasterStore>(context, listen: false).reset();
 
         _store.setIsLoggedIn(true);
 

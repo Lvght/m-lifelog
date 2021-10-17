@@ -15,14 +15,15 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   Future<void> _loadData(BuildContext context) async {
-    MasterStore _store = MasterStore();
-
-    bool initializationSucceded = await _store.initializeDatabase();
+    bool initializationSucceded =
+        await Provider.of<MasterStore>(context, listen: false)
+            .initializeDatabase();
 
     if (initializationSucceded) {
       Navigator.of(context).pushReplacement(MaterialPageRoute(
           builder: (BuildContext context) => Provider(
-                create: (_) => _store,
+                create: (_) =>
+                    (_) => Provider.of<MasterStore>(context, listen: false),
                 builder: (_, __) => const Wrapper(),
               )));
     } else {

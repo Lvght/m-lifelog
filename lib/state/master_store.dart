@@ -15,7 +15,11 @@ abstract class _MasterStoreBase with Store {
   bool _exausted = false;
   final entries = ObservableList<Entry>();
 
-  Future<void>? getContent() async {
+  @observable
+  bool darkTheme = false;
+
+  @action
+  Future<void> getContent() async {
     if (_db != null && !_exausted) {
       await _db!.transaction((txn) async {
         List<Map<String, Object?>> result = await txn.query('Entries',
@@ -32,6 +36,15 @@ abstract class _MasterStoreBase with Store {
     }
   }
 
+  Future<void>? reset() async {
+    await closeDatabase();
+    _offset = 0;
+    _exausted = false;
+    entries.clear();
+    _db = await DatabaseHelper.initializeDatabase();
+    await getContent();
+  }
+
   Future<void>? closeDatabase() async {
     if (_db != null) {
       await _db!.close();
@@ -39,9 +52,18 @@ abstract class _MasterStoreBase with Store {
   }
 
   /// Returns [true] if successful. [false], otherwise.
+  @action
   Future<bool> initializeDatabase() async {
     _db = await DatabaseHelper.initializeDatabase();
-    return _db != null;
+
+    if (_db != null) {
+      List<Map<String, Object?>> r = await _db!.query('User', limit: 1);
+      darkTheme = r.first['dark_theme'] as int == 0;
+
+      return true;
+    }
+
+    return false;
   }
 
   Future<bool>? saveEntry(Entry e) async {

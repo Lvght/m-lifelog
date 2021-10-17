@@ -16,6 +16,9 @@ class DatabaseHelper {
     await db
         .execute('CREATE TABLE Entries (id INTEGER PRIMARY KEY, title TEXT, '
             'content TEXT, feeling INT, created_at INT NOT NULL, image BLOB)');
+
+    await db.execute('CREATE TABLE User (dark_theme INT)');
+    await db.insert('User', {'dark_theme': 0});
   }
 
   static Future<Database?> initializeDatabase() async {
