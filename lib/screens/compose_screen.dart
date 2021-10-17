@@ -1,35 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:lifelog/models/entry.dart';
 import 'package:lifelog/screens/focus_screen.dart';
 import 'package:lifelog/state/compose_store.dart';
-import 'package:lifelog/state/master_store.dart';
-import 'package:provider/provider.dart';
 
 class ComposeScreen extends StatefulWidget {
-  const ComposeScreen({Key? key}) : super(key: key);
+  const ComposeScreen(
+      {required this.saveEntryCallback, this.initialEntry, Key? key})
+      : super(key: key);
+  final void Function(Entry e) saveEntryCallback;
+  final Entry? initialEntry;
 
   @override
   State<ComposeScreen> createState() => _ComposeScreenState();
 }
 
 class _ComposeScreenState extends State<ComposeScreen> {
-  final _titleController = TextEditingController();
-  final _contentController = TextEditingController();
+  TextEditingController _titleController = TextEditingController();
+  TextEditingController _contentController = TextEditingController();
 
   final _store = ComposeStore();
-
-  void _saveEntry(BuildContext context) async {
-    await Provider.of<MasterStore>(context, listen: false).saveEntry(
-      content: _contentController.text,
-      title: _titleController.text,
-      sentiment: _store.currentSentiment,
-      createdAt: _store.dateTime,
-      image: _store.image,
-    );
-
-    Navigator.of(context).pop();
-  }
 
   Future<void>? _invokeDateTimePicker(BuildContext context) async {
     DateTime? d = await showDatePicker(
@@ -114,6 +105,22 @@ class _ComposeScreenState extends State<ComposeScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+
+    if (widget.initialEntry != null) {
+      _store.setCurrentSentiment(widget.initialEntry!.sentiment);
+      _store.setImage(widget.initialEntry!.image);
+      _store.setDateTime(widget.initialEntry!.createdAt);
+
+      _titleController =
+          TextEditingController(text: widget.initialEntry!.title);
+      _contentController =
+          TextEditingController(text: widget.initialEntry!.content);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -124,7 +131,18 @@ class _ComposeScreenState extends State<ComposeScreen> {
         title: const Text('Nova entrada'),
         actions: [
           IconButton(
-            onPressed: () async => _saveEntry(context),
+            onPressed: () async {
+              Entry e = Entry(
+                content: _contentController.text,
+                title: _titleController.text,
+                createdAt: _store.dateTime ?? DateTime.now(),
+                image: _store.image,
+                sentiment: _store.currentSentiment,
+                id: widget.initialEntry?.id ?? 0,
+              );
+
+              widget.saveEntryCallback(e);
+            },
             icon: const Icon(Icons.check_circle_rounded),
           )
         ],

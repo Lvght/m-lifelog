@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+/*import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:lifelog/models/entry.dart';
 import 'package:lifelog/state/master_store.dart';
@@ -18,6 +18,7 @@ class _TimelineState extends State<Timeline> {
     final _entry = Provider.of<MasterStore>(context).entries[index];
     return EntryCard(
       _entry,
+      editFn: (Entry newEntry) {},
       deleteFn: (Entry e) async {
         final _store = Provider.of<MasterStore>(context, listen: false);
 
@@ -39,3 +40,4 @@ class _TimelineState extends State<Timeline> {
     );
   }
 }
+*/

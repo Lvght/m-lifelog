@@ -18,9 +18,12 @@ class _MainScreenState extends State<MainScreen> {
     final _entry = Provider.of<MasterStore>(context).entries[index];
     return EntryCard(
       _entry,
+      editFn: (Entry e) async {
+        final _store = Provider.of<MasterStore>(context, listen: false);
+        _store.editEntry(e, index: index);
+      },
       deleteFn: (Entry e) async {
         final _store = Provider.of<MasterStore>(context, listen: false);
-
         _store.deleteEntry(index);
       },
     );
@@ -31,11 +34,19 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void _fobCallback() {
-    Navigator.of(context).push(MaterialPageRoute(
+    Navigator.of(context).push(
+      MaterialPageRoute(
         builder: (_) => Provider(
-              builder: (_, __) => const ComposeScreen(),
-              create: (_) => Provider.of<MasterStore>(context, listen: false),
-            )));
+          builder: (_, __) => ComposeScreen(
+            saveEntryCallback: (Entry e) async {
+              Provider.of<MasterStore>(context, listen: false).saveEntry(e);
+              Navigator.of(context).pop();
+            },
+          ),
+          create: (_) => Provider.of<MasterStore>(context, listen: false),
+        ),
+      ),
+    );
   }
 
   @override

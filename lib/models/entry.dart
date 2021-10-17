@@ -5,9 +5,11 @@ class Entry {
       {required this.id,
       required this.createdAt,
       required this.image,
-      required this.title,
-      required this.content,
-      required this.sentiment});
+      required String? title,
+      required String? content,
+      required this.sentiment})
+      : title = title != null && title.isNotEmpty ? title : null,
+        content = content != null && content.isNotEmpty ? content : null;
 
   factory Entry.fromMap(Map<String, Object?> m) {
     int id = m['id'] as int? ?? 0;
@@ -31,7 +33,7 @@ class Entry {
     );
   }
 
-  final int id;
+  int id;
   final String? title;
   final String? content;
   final DateTime createdAt;

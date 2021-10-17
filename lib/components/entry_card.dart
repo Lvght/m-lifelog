@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:lifelog/models/entry.dart';
+import 'package:lifelog/screens/compose_screen.dart';
 
-enum EntryCardMenuActions { delete, star }
+enum EntryCardMenuActions { delete, edit, star }
 
 class EntryCard extends StatelessWidget {
-  const EntryCard(this._entry, {required this.deleteFn, Key? key})
+  const EntryCard(this._entry,
+      {required this.deleteFn, required this.editFn, Key? key})
       : super(key: key);
   final Entry _entry;
   final Future<void>? Function(Entry) deleteFn;
+  final Future<void>? Function(Entry) editFn;
 
   String _weekday(int v) {
     switch (v) {
@@ -98,6 +101,17 @@ class EntryCard extends StatelessWidget {
     );
   }
 
+  void _editEntryCallback(BuildContext context) {
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (_) => ComposeScreen(
+              initialEntry: _entry,
+              saveEntryCallback: (Entry e) async {
+                editFn(e);
+                Navigator.of(context).pop();
+              },
+            )));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -127,6 +141,9 @@ class EntryCard extends StatelessWidget {
                     case EntryCardMenuActions.delete:
                       await deleteFn(_entry);
                       break;
+                    case EntryCardMenuActions.edit:
+                      _editEntryCallback(context);
+                      break;
                     case EntryCardMenuActions.star:
                       // TODO: Handle this case.
                       break;
@@ -145,6 +162,17 @@ class EntryCard extends StatelessWidget {
                     ),
                     value: EntryCardMenuActions.star,
                   ),*/
+                  PopupMenuItem(
+                    child: Row(
+                      children: [
+                        Icon(Icons.edit_rounded,
+                            color: Theme.of(context).colorScheme.onSecondary),
+                        const SizedBox(width: 8),
+                        const Text('Editar'),
+                      ],
+                    ),
+                    value: EntryCardMenuActions.edit,
+                  ),
                   PopupMenuItem(
                     child: Row(
                       children: [

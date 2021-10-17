@@ -1,5 +1,3 @@
-import 'dart:typed_data' show Uint8List;
-
 import 'package:lifelog/helpers/database_helper.dart';
 import 'package:lifelog/models/entry.dart';
 import 'package:mobx/mobx.dart';
@@ -46,41 +44,28 @@ abstract class _MasterStoreBase with Store {
     return _db != null;
   }
 
-  Future<bool>? saveEntry({
-    required String? title,
-    required String? content,
-    required int? sentiment,
-    required DateTime? createdAt,
-    required Uint8List? image,
-  }) async {
+  Future<bool>? saveEntry(Entry e) async {
     if (_db != null) {
       // Empty strings MUST NOT be used as values.
       // They might happen because of the TextEditingControllers
-      if (title != null && title.isEmpty) title = null;
+      String? title = e.title, content = e.content;
+      if (e.title != null && e.title!.isEmpty) title = null;
       if (content != null && content.isEmpty) content = null;
 
       // At least ONE information must be provided.
-      if (title == null && content == null && sentiment == null) return false;
+      if (title == null && content == null && e.sentiment == null) return false;
 
       await _db!.transaction((txn) async {
         int id = await txn.insert('Entries', {
           'title': title,
           'content': content,
-          'feeling': sentiment,
-          'image': image,
-          'created_at': createdAt != null
-              ? createdAt.millisecondsSinceEpoch
-              : DateTime.now().millisecondsSinceEpoch,
+          'feeling': e.sentiment,
+          'image': e.image,
+          'created_at': e.createdAt.millisecondsSinceEpoch,
         });
 
-        entries.add(Entry(
-          id: id,
-          createdAt: createdAt ?? DateTime.now(),
-          title: title,
-          sentiment: sentiment,
-          content: content,
-          image: image,
-        ));
+        e.id = id;
+        entries.add(e);
       });
 
       entries.sort((Entry a, Entry b) {
@@ -97,6 +82,36 @@ abstract class _MasterStoreBase with Store {
               where: 'id = ?', whereArgs: [entries[index].id]) ==
           1) {
         entries.removeAt(index);
+      }
+    }
+  }
+
+  Future<void>? editEntry(Entry e, {required int index}) async {
+    if (_db != null) {
+      // Empty strings MUST NOT be used as values.
+      // They might happen because of the TextEditingControllers
+      String? title = e.title, content = e.content;
+      if (e.title != null && e.title!.isEmpty) title = null;
+      if (content != null && content.isEmpty) content = null;
+
+      int affectedRows = await _db!.update(
+          'Entries',
+          {
+            'title': title,
+            'content': content,
+            'feeling': e.sentiment,
+            'image': e.image,
+            'created_at': e.createdAt.millisecondsSinceEpoch,
+          },
+          where: 'id = ?',
+          whereArgs: [e.id]);
+
+      if (affectedRows == 1) {
+        entries[index] = e;
+
+        entries.sort((Entry a, Entry b) {
+          return b.createdAt.compareTo(a.createdAt);
+        });
       }
     }
   }
