@@ -165,7 +165,7 @@ class EntryCard extends StatelessWidget {
           // Attached image.
           if (_entry.image != null)
             Container(
-              margin: const EdgeInsets.symmetric(vertical: 16),
+              margin: const EdgeInsets.only(top: 8),
               child: AspectRatio(
                 aspectRatio: 4 / 3,
                 child: ClipRRect(
@@ -178,10 +178,17 @@ class EntryCard extends StatelessWidget {
               ),
             ),
           if (_entry.title != null)
-            Text(_entry.title!, style: Theme.of(context).textTheme.headline6),
-          if (_entry.title != null) const SizedBox(height: 8),
+            Container(
+              margin: const EdgeInsets.only(top: 16),
+              child: Text(_entry.title!,
+                  style: Theme.of(context).textTheme.headline6),
+            ),
           if (_entry.content != null)
-            Text(_entry.content!, style: Theme.of(context).textTheme.bodyText2),
+            Container(
+              margin: const EdgeInsets.only(top: 8),
+              child: Text(_entry.content!,
+                  style: Theme.of(context).textTheme.bodyText2),
+            ),
           Divider(
             endIndent: MediaQuery.of(context).size.width * 0.8,
             color: Colors.black,
