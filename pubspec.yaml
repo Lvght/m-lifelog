@@ -49,6 +49,7 @@ dependencies:
   googleapis: ^6.0.0
   path_provider: ^2.0.5
   intl: ^0.17.0
+  fl_chart: ^0.40.2
 
 dev_dependencies:
   flutter_test:

@@ -146,4 +146,22 @@ abstract class _MasterStoreBase with Store {
       }
     }
   }
+
+  Future<List<Entry>> getLast7DaysEntries() async {
+    if (_db != null) {
+      DateTime weekAgo = DateTime(
+              DateTime.now().year, DateTime.now().month, DateTime.now().day)
+          .subtract(const Duration(days: 7));
+
+      List<Map<String, Object?>> result = await _db!.query('Entries',
+          where: 'created_at >= ?',
+          whereArgs: [weekAgo.millisecondsSinceEpoch]);
+
+      print('Obtained ${result.length} entries');
+
+      return result.map((e) => Entry.fromMap(e)).toList();
+    }
+
+    return [];
+  }
 }

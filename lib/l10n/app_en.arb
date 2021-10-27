@@ -7,6 +7,7 @@
     "activateDarkTheme": "Enable dark theme",
     "disableDarkTheme": "Disable dark theme",
     "labelHomePage": "Home",
+    "labelStatsPage": "Stats",
     "labelOptionsPage": "Options",
     "googleLogout": "You logged out successfully",
     "backupToGDrive": "Backup data to Google Drive",

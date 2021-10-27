@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lifelog/screens/main_screen.dart';
 import 'package:lifelog/screens/options_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:lifelog/screens/statistics_screen.dart';
 
 class Wrapper extends StatefulWidget {
   const Wrapper({Key? key}) : super(key: key);
@@ -24,6 +25,7 @@ class _WrapperState extends State<Wrapper> {
           index: _index,
           children: const [
             MainScreen(),
+            StatisticsScreen(),
             OptionsScreen(),
           ],
         ),
@@ -34,6 +36,9 @@ class _WrapperState extends State<Wrapper> {
             BottomNavigationBarItem(
                 icon: const Icon(Icons.home_rounded),
                 label: AppLocalizations.of(context)!.labelHomePage),
+            BottomNavigationBarItem(
+                icon: const Icon(Icons.stacked_bar_chart_rounded),
+                label: AppLocalizations.of(context)!.labelStatsPage),
             BottomNavigationBarItem(
                 icon: const Icon(Icons.menu_rounded),
                 label: AppLocalizations.of(context)!.labelOptionsPage),
